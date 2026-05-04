@@ -82,6 +82,20 @@ const TOOLS = {
     },
     handler: G.getMessage,
   },
+  batch_get_messages: {
+    description: 'Fetch many messages in parallel with bounded concurrency. Returns { messages, errors }. Use this instead of looping get_message — one tool call instead of N round-trips for the agent.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        ids: { type: 'array', items: { type: 'string' } },
+        format: { type: 'string', enum: ['full', 'metadata', 'minimal', 'raw'] },
+        metadataHeaders: { type: 'array', items: { type: 'string' } },
+        concurrency: { type: 'integer', description: 'Parallel fetch limit (default 10)' },
+      },
+      required: ['ids'],
+    },
+    handler: G.batchGetMessages,
+  },
   send_message: {
     description: 'Send a message. Supports To/Cc/Bcc, plaintext + HTML, attachments (path or base64), threaded replies (set inReplyTo, references, threadId).',
     inputSchema: MESSAGE_BODY,
@@ -147,12 +161,18 @@ const TOOLS = {
     handler: G.getDraft,
   },
   create_draft: {
-    description: 'Create a draft. Same body shape as send_message. For threaded reply drafts that DOCK into an existing thread, use create_reply_draft instead — it handles In-Reply-To/References/threadId for you.',
-    inputSchema: MESSAGE_BODY,
+    description: 'Create a draft. Same body shape as send_message, plus optional useSignature (default true) to auto-append the user\'s default Gmail signature from send-as. For threaded reply drafts, use create_reply_draft instead — it handles In-Reply-To/References/threadId AND quoted parent body.',
+    inputSchema: {
+      ...MESSAGE_BODY,
+      properties: {
+        ...MESSAGE_BODY.properties,
+        useSignature: { type: 'boolean', description: 'Auto-append the user\'s Gmail signature from send-as (default: true). Set false for raw drafts where the body is already complete.' },
+      },
+    },
     handler: G.createDraft,
   },
   create_reply_draft: {
-    description: 'Create a draft as a threaded reply to an existing message. Pulls In-Reply-To, References, threadId, and Re: subject from the parent so the draft appears inside the original Gmail thread. THIS IS THE ONE THE DEFAULT GMAIL MCP CANNOT DO.',
+    description: 'Create a draft as a threaded reply to an existing message. Pulls In-Reply-To, References, threadId, and Re: subject from the parent so the draft appears inside the original Gmail thread. AUTO-INCLUDES the parent body as a Gmail-style quote (gmail_quote/gmail_attr/blockquote markup, byte-matched to Gmail web UI) AND auto-appends the user\'s send-as signature, so the rendered draft looks like a normal Gmail reply. THIS IS THE ONE THE DEFAULT GMAIL MCP CANNOT DO.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -165,6 +185,8 @@ const TOOLS = {
         extraCc:  ADDR,
         extraBcc: ADDR,
         fromAlias: { description: 'Optional verified send-as alias', oneOf: ADDR.oneOf.slice(0, 2) },
+        includeQuotedParent: { type: 'boolean', description: 'Append parent body as quoted reply (default: true).' },
+        useSignature: { type: 'boolean', description: 'Auto-append the user\'s Gmail signature (default: true).' },
       },
       required: ['toMessageId'],
     },
@@ -197,6 +219,20 @@ const TOOLS = {
     description: 'Get a thread by id with all messages.',
     inputSchema: { type: 'object', properties: { id: { type: 'string' }, format: { type: 'string' }, metadataHeaders: { type: 'array', items: { type: 'string' } } }, required: ['id'] },
     handler: G.getThread,
+  },
+  batch_get_threads: {
+    description: 'Fetch many threads in parallel with bounded concurrency. Returns { threads, errors }. Most useful for analysis flows that need full conversation context across many threads at once.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        ids: { type: 'array', items: { type: 'string' } },
+        format: { type: 'string', enum: ['full', 'metadata', 'minimal'] },
+        metadataHeaders: { type: 'array', items: { type: 'string' } },
+        concurrency: { type: 'integer', description: 'Parallel fetch limit (default 10)' },
+      },
+      required: ['ids'],
+    },
+    handler: G.batchGetThreads,
   },
   modify_thread: {
     description: 'Add/remove labels on a thread (applies to all messages).',

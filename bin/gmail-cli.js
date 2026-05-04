@@ -24,6 +24,7 @@ Auth:
 Messages:
   list-messages    --q <query> --max <n> --label <id>...
   get-message      --id <id> [--format full|metadata|minimal|raw]
+  batch-get-messages --json '{"ids":[...],"format":"full","concurrency":10}'
   send             --json '{"to":"...","subject":"...","text":"...","attachments":[{"path":"..."}]}'
   modify-message   --id <id> --add <label>... --remove <label>...
   batch-modify     --json '{"ids":[...],"addLabelIds":[...],"removeLabelIds":[...]}'
@@ -45,6 +46,7 @@ Drafts:
 Threads:
   list-threads     --q <query> --max <n>
   get-thread       --id <id>
+  batch-get-threads --json '{"ids":[...],"format":"full","concurrency":10}'
   modify-thread    --id <id> --add <label>... --remove <label>...
   trash-thread     --id <id>
   untrash-thread   --id <id>
@@ -336,6 +338,10 @@ async function main() {
       case 'get-message':
         out(await G.getMessage({ id: f.id, format: f.format }));
         break;
+      case 'batch-get-messages':
+        if (!json) throw new Error('batch-get-messages requires --json');
+        out(await G.batchGetMessages(json));
+        break;
       case 'send':
         if (!json) throw new Error('send requires --json');
         out(await G.sendMessage(json));
@@ -387,6 +393,10 @@ async function main() {
         }));
         break;
       case 'get-thread':      out(await G.getThread({ id: f.id, format: f.format })); break;
+      case 'batch-get-threads':
+        if (!json) throw new Error('batch-get-threads requires --json');
+        out(await G.batchGetThreads(json));
+        break;
       case 'modify-thread':
         out(await G.modifyThread({
           id: f.id,
