@@ -326,7 +326,7 @@ const TOOLS = {
   list_send_as:   { description: 'List send-as aliases (each carries its own signature).', inputSchema: { type: 'object', properties: {} }, handler: G.listSendAs },
   get_send_as:    { description: 'Get a send-as alias by email.', inputSchema: { type: 'object', properties: { sendAsEmail: { type: 'string' } }, required: ['sendAsEmail'] }, handler: G.getSendAs },
   create_send_as: {
-    description: 'Create a send-as alias. WORKSPACE-ONLY — fails with 403 "domain-wide authority" on personal Gmail accounts. Direct Mike to Gmail web UI Settings → Accounts → Send mail as for personal-account operations.',
+    description: 'Create a send-as alias. WORKSPACE-ONLY — fails with 403 "domain-wide authority" on personal Gmail accounts. For personal Gmail, direct the user to Gmail web UI Settings → Accounts → Send mail as.',
     inputSchema: {
       type: 'object',
       properties: {

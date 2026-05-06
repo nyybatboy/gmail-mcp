@@ -1,9 +1,23 @@
 {
   "name": "gmail-mcp",
-  "version": "0.3.0",
-  "private": true,
-  "description": "Mike's max-unlock Gmail CLI + MCP server. Full Gmail API surface: send, drafts with attachments, threaded replies, labels, filters, settings (vacation/signatures/forwarding/delegates/IMAP/POP), watch, history. Auth: OAuth 2.0 desktop flow with Mike's own Cloud Console OAuth client (gcloud's ADC client cannot grant Gmail's restricted scopes).",
+  "version": "0.4.0",
+  "description": "Full Gmail API surface as an MCP server (~55 tools): send, drafts with attachments, threaded reply drafts, labels, filters, settings (vacation/signatures/forwarding/delegates/IMAP/POP/S-MIME), watch, history. Auth: OAuth 2.0 desktop flow with your own Cloud Console OAuth client.",
   "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nyybatboy/gmail-mcp.git"
+  },
+  "keywords": [
+    "gmail",
+    "mcp",
+    "model-context-protocol",
+    "anthropic",
+    "claude",
+    "ai-agents",
+    "google-api",
+    "oauth"
+  ],
   "engines": {
     "node": ">=20"
   },

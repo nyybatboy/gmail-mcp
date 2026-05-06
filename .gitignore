@@ -8,3 +8,5 @@ profile.json
 client_secret*.json
 *.pem
 *.p12
+# project-agent context (local-only, contains private orchestration details)
+.claude/

@@ -10,7 +10,7 @@ The standard workaround for personal use: **you create your own OAuth client**, 
 
 ## 1. Create a Google Cloud OAuth desktop client
 
-1. Go to <https://console.cloud.google.com/projectcreate> — create a project (any name, e.g. `mike-gmail-mcp`).
+1. Go to <https://console.cloud.google.com/projectcreate> — create a project (any name, e.g. `gmail-mcp`).
 2. With that project selected, enable the Gmail API: <https://console.cloud.google.com/apis/library/gmail.googleapis.com> → **Enable**.
 3. Configure the OAuth consent screen at <https://console.cloud.google.com/apis/credentials/consent>.
    - User type: **External**
@@ -31,7 +31,7 @@ mkdir -p ~/.gmail-mcp && chmod 700 ~/.gmail-mcp
 mv ~/Downloads/client_secret_*.json ~/.gmail-mcp/credentials.json
 chmod 600 ~/.gmail-mcp/credentials.json
 
-cd ~/Webdev/gmail-mcp
+cd /path/to/gmail-mcp
 npm install
 node bin/gmail-cli.js auth
 ```
@@ -56,7 +56,7 @@ node bin/gmail-cli.js list-messages --q "is:unread" --max 5
 ## 4. Register the MCP
 
 ```bash
-claude mcp add gmail-max -- node /Users/ml/Webdev/gmail-mcp/bin/gmail-mcp.js
+claude mcp add gmail-max -- node /absolute/path/to/gmail-mcp/bin/gmail-mcp.js
 ```
 
 Restart Claude Code (or end this session and start a new one). Tools surface as `mcp__gmail-max__*`.
